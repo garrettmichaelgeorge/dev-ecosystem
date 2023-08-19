@@ -1,2 +1,7 @@
 set -euo pipefail
-cowsay "I exist, therefore I was fetched by Nix!"
+
+cowsay << EOF
+I exist, therefore I was fetched by Nix!
+
+- cowsay
+EOF
