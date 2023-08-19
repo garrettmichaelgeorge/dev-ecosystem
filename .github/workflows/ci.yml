@@ -1,0 +1,25 @@
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  nix-flake-check:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Ensure Nix flake inputs are fresh
+        # TODO: re-evaluate whether to allow failure
+        continue-on-error: true
+        uses: DeterminateSystems/flake-checker-action@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v3
+
+      - name: Cache Nix builds
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Check Nix flake
+        run: nix flake check
