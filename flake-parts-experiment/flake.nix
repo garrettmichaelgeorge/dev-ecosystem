@@ -19,12 +19,16 @@
         let
           mkScript = name: runtimeInputs: pkgs.writeShellApplication {
             inherit name runtimeInputs;
-            text = builtins.readFile ./pkgs/${name}.sh;
+            text = builtins.readFile ./pkgs/${name}/${name}.sh;
           };
 
           mkScript2 = { name, runtimeInputs, ext ? null }: pkgs.writeShellApplication {
             inherit name runtimeInputs;
-            text = builtins.readFile ./pkgs/${name}${if ext then ".${ext}" else ""};
+            text =
+              let
+                maybeExt = if pkgs.lib.isString (ext) then ".${ext}" else "";
+              in
+              builtins.readFile ./pkgs/${name}/${name}${maybeExt};
           };
         in
         {
@@ -40,7 +44,7 @@
             my-first-script = pkgs.writeShellApplication {
               name = "my-first-script";
               runtimeInputs = [ ];
-              text = builtins.readFile ./pkgs/my-first-script.sh;
+              text = builtins.readFile ./pkgs/my-first-script/my-first-script.sh;
             };
 
             # Short form
@@ -53,14 +57,9 @@
               runtimeInputs = [ pkgs.cowsay ];
               ext = "sh";
             };
-
-            # Long form, i.e. calling pkgs.writeShellApplication directly
-            script-with-deps-longform = pkgs.writeShellApplication {
-              name = "script-with-deps";
-              runtimeInputs = [ pkgs.cowsay ];
-              text = builtins.readFile ./pkgs/script-with-deps.sh;
-            };
           };
+
+          checks = config.packages;
         };
       flake = {
         # The usual flake attributes can be defined here, including system-
