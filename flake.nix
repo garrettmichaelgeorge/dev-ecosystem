@@ -17,18 +17,18 @@
       systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
       perSystem = { config, self', inputs', pkgs, system, ... }:
         let
-          mkScript = name: runtimeInputs: pkgs.writeShellApplication {
-            inherit name runtimeInputs;
-            text = builtins.readFile ./pkgs/${name}/${name}.sh;
-          };
-
-          mkScript2 = { name, runtimeInputs, ext ? null }: pkgs.writeShellApplication {
+          mkShellScript = name: ext: runtimeInputs: pkgs.writeShellApplication {
             inherit name runtimeInputs;
             text =
-              let
-                maybeExt = if pkgs.lib.isString (ext) then ".${ext}" else "";
-              in
-              builtins.readFile ./pkgs/${name}/${name}${maybeExt};
+              let maybeExt = if pkgs.lib.isString (ext) then ".${ext}" else "";
+              in builtins.readFile ./pkgs/${name}/${name}${maybeExt};
+          };
+
+          mkShellScript2 = { name, runtimeInputs, ext ? null }: pkgs.writeShellApplication {
+            inherit name runtimeInputs;
+            text =
+              let maybeExt = if pkgs.lib.isString (ext) then ".${ext}" else "";
+              in builtins.readFile ./pkgs/${name}/${name}${maybeExt};
           };
         in
         {
@@ -48,11 +48,11 @@
             };
 
             # Short form
-            script-with-deps = mkScript "script-with-deps" [ pkgs.cowsay ];
+            script-with-deps = mkShellScript "script-with-deps" "sh" [ pkgs.cowsay ];
 
             # Medium form; not much shorter than writeShellApplication, but
             # enforces the repo directory convention (pkgs/${pkgname}.${ext})
-            script-with-deps2 = mkScript2 {
+            script-with-deps2 = mkShellScript2 {
               name = "script-with-deps";
               runtimeInputs = [ pkgs.cowsay ];
               ext = "sh";
