@@ -57,9 +57,21 @@
               runtimeInputs = [ pkgs.cowsay ];
               ext = "sh";
             };
+
+
+            print-date = pkgs.poetry2nix.mkPoetryApplication {
+              projectDir = ./pkgs/print-date;
+            };
           };
 
           checks = config.packages;
+
+          apps = {
+            print-date = {
+              type = "app";
+              program = "${config.packages.print-date}/bin/print-date";
+            };
+          };
         };
       flake = {
         # The usual flake attributes can be defined here, including system-
