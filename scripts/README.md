@@ -53,7 +53,7 @@ How do we bundle the script?
 
 First, create a directory called `scripts/my-new-script`. Note the hyphens and lowercase.
 
-Next, place the script itself in `scripts/my-new-script/my-new-script.sh`.
+Next, copy the script above into a file called `scripts/my-new-script/my-new-script.sh`.
 
 Now we are ready to package the script so others can use it. We will do this in the top-level `flake.nix`. Think of `flake.nix` as a root-level index or manifest file that makes code within the project available to outside users, kind of like `pyproject.toml` or `package.json` + `index.js` or `mix.exs`. 
 
@@ -78,7 +78,7 @@ $ nix run .\#my-new-script -- "Hello, world!" "MooMoo"
 /nix/store/2g5k52cgma1z2wx9iqvl0ysrqjr1z0sy-my-new-script/bin/my-new-script: line 8: cowsay: command not found
 ```
 
-It will take a few seconds to build the script before running it. And it looks like `cowsay` was unavailable on the machine!
+It will take a few seconds to build the script before running it. It looks like `cowsay` was unavailable on the machine!
 
 (Don't worry if the `/nix/store` path looks slightly different; the hash part `/nix/store/<hash-part>-my-new-script/bin/my-new-script` will likely differ from the above.)
 
