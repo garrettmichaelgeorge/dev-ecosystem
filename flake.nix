@@ -31,10 +31,10 @@
               in builtins.readFile ./scripts/${name}/${name}${maybeExt};
           };
 
-          mkPythonScript = name: pkgs.poetry2nix.mkPoetryApplication {
-              meta.mainProgram = name;
-              projectDir = ./scripts/${name};
-            };
+          mkPythonPoetryScript = name: pkgs.poetry2nix.mkPoetryApplication {
+            meta.mainProgram = name;
+            projectDir = ./scripts/${name};
+          };
         in
         {
           # Per-system attributes can be defined here. The self' and inputs'
@@ -63,7 +63,7 @@
               ext = "sh";
             };
 
-            print-date = mkPythonScript "print-date";
+            print-date = mkPythonPoetryScript "print-date";
           };
 
           checks = config.packages;
