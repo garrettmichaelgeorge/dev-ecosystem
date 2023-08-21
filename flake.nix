@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = inputs@{ flake-parts, ... }:
+  outputs = inputs@{ flake-parts, self, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         # To import a flake module
@@ -31,10 +31,7 @@
               in builtins.readFile ./scripts/${name}/${name}${maybeExt};
           };
 
-          mkPythonPoetryScript = name: pkgs.poetry2nix.mkPoetryApplication {
-            meta.mainProgram = name;
-            projectDir = ./scripts/${name};
-          };
+          lib = import lib/scripts.nix;
         in
         {
           # Per-system attributes can be defined here. The self' and inputs'
@@ -63,7 +60,10 @@
               ext = "sh";
             };
 
-            print-date = mkPythonPoetryScript "print-date";
+            print-date = lib.mkPythonPoetryScript {
+              name = "print-date";
+              inherit pkgs;
+            };
           };
 
           checks = config.packages;
