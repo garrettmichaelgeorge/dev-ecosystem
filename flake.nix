@@ -30,6 +30,11 @@
               let maybeExt = if pkgs.lib.isString (ext) then ".${ext}" else "";
               in builtins.readFile ./pkgs/${name}/${name}${maybeExt};
           };
+
+          mkPythonScript = name: pkgs.poetry2nix.mkPoetryApplication {
+              meta.mainProgram = name;
+              projectDir = ./pkgs/${name};
+            };
         in
         {
           # Per-system attributes can be defined here. The self' and inputs'
@@ -58,20 +63,10 @@
               ext = "sh";
             };
 
-
-            print-date = pkgs.poetry2nix.mkPoetryApplication {
-              projectDir = ./pkgs/print-date;
-            };
+            print-date = mkPythonScript "print-date";
           };
 
           checks = config.packages;
-
-          apps = {
-            print-date = {
-              type = "app";
-              program = "${config.packages.print-date}/bin/print-date";
-            };
-          };
         };
       flake = {
         # The usual flake attributes can be defined here, including system-
